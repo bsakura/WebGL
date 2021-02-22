@@ -1,0 +1,266 @@
+function getMousePosition(canvas, event) { 
+    let temp = [];
+    let rect = canvas.getBoundingClientRect(); 
+    let x = ((event.clientX - rect.left)/(canvas.width))*2-1; 
+    let y = -((event.clientY - rect.top)/(canvas.height))*2+1; 
+    //console.log("Coordinate x: " + x, "Coordinate y: " + y);
+    temp.push(x);
+    temp.push(y)
+    return(temp);
+} 
+
+// Create an empty buffer object
+var vertex_buffer = gl.createBuffer();
+// Create an empty buffer object and store color data
+var color_buffer = gl.createBuffer ();
+
+function setUpBuffer(){
+    // Bind appropriate array buffer to it
+    gl.bindBuffer(gl.ARRAY_BUFFER, vertex_buffer);
+
+    // Unbind the buffer
+    gl.bindBuffer(gl.ARRAY_BUFFER, null);
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, color_buffer);
+
+    /*======= Associating shaders to buffer objects ======*/
+    // Bind vertex buffer object
+    gl.bindBuffer(gl.ARRAY_BUFFER, vertex_buffer);
+
+    // Get the attribute location
+    var coord = gl.getAttribLocation(shaderProgram, "coordinates");
+
+    // Point an attribute to the currently bound VBO
+    gl.vertexAttribPointer(coord, 2, gl.FLOAT, false, 0, 0);
+
+    // Enable the attribute
+    gl.enableVertexAttribArray(coord);
+
+    // bind the color buffer
+    gl.bindBuffer(gl.ARRAY_BUFFER, color_buffer);
+         
+    // get the attribute location
+    var color = gl.getAttribLocation(shaderProgram, "color");
+
+    // point attribute to the volor buffer object
+    gl.vertexAttribPointer(color, 3, gl.FLOAT, false,0,0) ;
+
+    // enable the color attribute
+    gl.enableVertexAttribArray(color);
+
+    gl.clearColor(0, 0, 0, 0);
+
+    // Enable the depth test
+    gl.enable(gl.DEPTH_TEST);
+
+    // Clear the color and depth buffer
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+    // Set the view port
+    gl.viewport(0,0,canvas.width,canvas.height);
+}
+
+function draw(){
+    gl.useProgram(shaderProgram);
+    // Pass the vertex data to the buffer
+    gl.bindBuffer(gl.ARRAY_BUFFER, vertex_buffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+    // Unbind the buffer
+    gl.bindBuffer(gl.ARRAY_BUFFER, null);
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, color_buffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
+
+    for (var i = 0; i<objects.length; i++) {
+        //console.log(objects[i]);
+        gl.drawArrays(objects[i].mode, objects[i].off, objects[i].count);
+    }
+}
+
+var canvasElem = document.querySelector("#glcanvas"); 
+var vec, selectedVertex, selectedObject;
+var vertexCount = 0;
+var vecTemp = [];
+var backupVertices;
+setUpBuffer();
+
+canvasElem.addEventListener('mousedown', (e) => 
+{ 
+    vec = getMousePosition(canvasElem, e);
+    if(resizeMode || cursorMode){
+        selectedVertex = -1;
+        selectedObject = -1;
+        for(var i = 0; i < vertices.length; i+=2){
+            if(((vertices[i]).toFixed(1) == (vec[0]).toFixed(1)) 
+            && ((vertices[i+1]).toFixed(1) == (vec[1]).toFixed(1))){
+                selectedVertex = i;
+                break;
+            }
+        }
+        if(selectedVertex != -1){
+            console.log(selectedVertex);
+            console.log(objects);
+            for(var i = objects.length-1; i >= 0; i--){
+                //console.log(objects[i].off)
+                if(objects[i].off*2 <= selectedVertex){
+                    selectedObject = i;
+                    break;
+                }
+                selectedObject = 0;
+            }
+        }
+        backupVertices = vertices.slice();
+    }
+    else if(!cursorMode){
+        vertices.push(vec[0]);
+        vertices.push(vec[1]);
+        if(lineMode == true){
+            //line here
+        }
+        else if(squareMode == true){
+            //square here
+        }
+
+        else if(polygonMode == true){
+            vertexCount += 1;
+            colors.push(0,0,1);
+            if(vertexCount == numVert){
+                objects.push({
+                    "name" : "polygon",
+                    "mode" : gl.TRIANGLE_FAN,
+                    "off" : offset,
+                    "count" : numVert
+                });
+                offset += numVert;
+                vertexCount = 0;
+            }
+        }
+        draw();
+    }
+    //console.log(vertices);
+
+});
+
+canvasElem.addEventListener('mousemove', (e) => {
+    if(vec!=null){
+        vec2 = getMousePosition(canvasElem, e);
+        if(cursorMode){
+            let deltaX = vec2[0] - vec[0];
+            let deltaY = vec2[1] - vec[1];
+            if(selectedObject == -1){
+                vertices = backupVertices.map((it,idx) => idx%2==0? it+deltaX : it+deltaY);
+            }
+            else {
+                for(var i = objects[selectedObject].off*2; i < objects[selectedObject].off*2 + objects[selectedObject].count*2; i+=2){
+                    vertices[i] = backupVertices[i] + deltaX;
+                    vertices[i+1] = backupVertices[i+1] + deltaY;
+                }
+            }
+           
+            draw();
+        }
+        else if(resizeMode && selectedObject != -1){
+            if(objects[selectedObject].name == "line"){
+                let centerX = (backupVertices[objects[selectedObject].off*2] + backupVertices[objects[selectedObject].off*2+2])/2;
+                let centerY = (backupVertices[objects[selectedObject].off*2+1] + backupVertices[objects[selectedObject].off*2+3])/2;
+                
+                let scaleX = (Math.abs(vec2[0] - centerX))/(Math.abs(vec[0] - centerX));
+                let scaleY = (Math.abs(vec2[1] - centerY))/(Math.abs(vec[1] - centerY));
+
+                var tempVertices = [];
+                for(var i = objects[selectedObject].off*2; i < objects[selectedObject].off*2 + objects[selectedObject].count*2; i++){
+                    tempVertices.push(vertices[i]);
+                }
+
+                for(var i = 0; i<tempVertices.length; i+=2){
+                    tempVertices[i] -= centerX;
+                    tempVertices[i+1] -= centerY;
+                }
+
+                for(var i = 0; i<tempVertices.length; i+=2){
+                    tempVertices[i] = (backupVertices[objects[selectedObject].off*2+i]-centerX)*scaleX;
+                    tempVertices[i+1] =(backupVertices[objects[selectedObject].off*2+i+1]-centerY)*scaleY;
+                }
+
+                for(var i = 0; i<tempVertices.length; i+=2){
+                    tempVertices[i] += centerX;
+                    tempVertices[i+1] += centerY;
+                }
+
+                var j = 0;
+                for(var i = objects[selectedObject].off*2; i < objects[selectedObject].off*2 + objects[selectedObject].count*2; i++){  
+                    vertices[i] = tempVertices[j];
+                    j++;
+                }
+            }
+            else if(objects[selectedObject].name == "square"){
+                
+                //let vertexTemp = vertices.slice(objects[selectedObject].offset, objects[selectedObject].offset+8);
+
+                let centerX = (backupVertices[objects[selectedObject].off*2] + backupVertices[objects[selectedObject].off*2+6])/2;
+                let centerY = (backupVertices[objects[selectedObject].off*2+1] + backupVertices[objects[selectedObject].off*2+7])/2;
+                // let centerX = (vertexTemp[0] + vertexTemp[6])/2;
+                // let centerY = (vertexTemp[1] + vertexTemp[7])/2;
+
+                let scaleX = (Math.abs(vec2[0] - centerX))/(Math.abs(vec[0] - centerX));
+                let scaleY = (Math.abs(vec2[1] - centerY))/(Math.abs(vec[1] - centerY));
+
+                var tempVertices = [];
+                for(var i = objects[selectedObject].off*2; i < objects[selectedObject].off*2 + objects[selectedObject].count; i++){
+                    tempVertices.push(vertices[i]);
+                }
+
+                for(var i = 0; i<tempVertices.length; i+=2){
+                    tempVertices[i] -= centerX;
+                    tempVertices[i+1] -= centerY;
+                }
+
+                for(var i = 0; i<tempVertices.length; i+=2){
+                    tempVertices[i] = (backupVertices[objects[selectedObject].off*2+i]-centerX)*scaleX;
+                    tempVertices[i+1] =(backupVertices[objects[selectedObject].off*2+i+1]-centerY)*scaleY;
+                }
+
+                for(var i = 0; i<tempVertices.length; i+=2){
+                    tempVertices[i] += centerX;
+                    tempVertices[i+1] += centerY;
+                }
+
+                let deltaX = (tempVertices[2] - tempVertices[0]) * (100/48);
+                let deltaY = (tempVertices[3] - tempVertices[1]) * 0.48;
+                tempVertices.push(tempVertices[0] - deltaY);
+                tempVertices.push(tempVertices[1] + deltaX);
+                tempVertices.push(tempVertices[2] - deltaY);
+                tempVertices.push(tempVertices[3] + deltaX);
+
+                var j = 0;
+                for(var i = objects[selectedObject].off*2; i < objects[selectedObject].off*2 + objects[selectedObject].count*2; i++){  
+                    vertices[i] = tempVertices[j];
+                    j++;
+                }
+
+
+            }
+            draw();
+        }
+    }
+    
+});
+
+canvasElem.addEventListener('mouseup', (e) => {
+    vec = null;
+    backupVertices = null;
+    // }
+    // else if(resizeMode){
+    //     let vec3 = getMousePosition(canvasElem, e);
+    //     if(objects[selectedObject].mode == "line"){
+    //         vertices[selectedVertex] = vec3[0];
+    //         vertices[selectedVertex+1] = vec3[1];
+    //     }
+    //     else if(objects[selectedObject].mode == "square"){
+
+    //         vertices[objects[selectedObject].offset]
+    //     }
+    // }
+
+});
+

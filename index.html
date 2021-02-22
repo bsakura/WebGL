@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="css/style.css">
+        <script>
+            var cursorMode = true;
+            var resizeMode = false;
+            var lineMode = false;
+            var squareMode = false;
+            var polygonMode = false;
+        </script>
+    </head>
+
+    <body>
+        <div class="title">
+        <div class="hub">
+            <span contenteditable="true">Web</span>
+            <span contenteditable="true">GL</span>
+        </div>
+    </div>
+        <div class="button-container"> 
+            <button class="button" id = "button-mouse" onclick="cursorButton()">Cursor</button>
+            <button class="button" id = "button-mouse" onclick="resizeButton()">Resize</button>
+            <button class="button" id = "button-draw" onclick="lineButton()">Line</button>
+            <button class="button" id = "button-draw" onclick="squareButton()">Square</button>
+            <button class="button" id = "button-draw" onclick="polygonButton()">Polygon</button>
+            <button class="button" id = "button-help">Help</button>
+        </div>
+        <canvas id="glcanvas" width="pixel">
+            Sorry, your browser doesn't support the HTML5 canvas element
+        </canvas>
+        <div class = "row">
+            <button class = "button-file" id = "button-save" onclick="saveData()">Save</button>
+            <button class = "button-file" id = "button-load" onclick="loadData()">Load</button>
+        </div>
+           
+            
+        </div>
+        
+    </body>
+
+    <script>
+        var vertices = [];
+        var colors = [];
+        var objects = [];
+        var offset = 0;
+
+        const canvas = document.querySelector('#glcanvas');
+        canvas.width = 900;
+        canvas.height = 580;
+        // Initialize the GL context
+        const gl = canvas.getContext('webgl');
+
+        if (!gl) {
+            alert('Unable to initialize WebGL. Your browser or machine may not support it.');
+        }
+
+        // Vertex shader source code
+        var vertCode = 'attribute vec3 coordinates;'+
+            'attribute vec3 color;'+
+            'varying vec3 vColor;'+               
+            'void main(void) {' +
+                ' gl_Position = vec4(coordinates, 1.0);' +
+                'vColor = color;'+
+            '}';
+
+        // Create a vertex shader object
+        var vertShader = gl.createShader(gl.VERTEX_SHADER);
+
+        // Fragment shader source code
+        var fragCode = 'precision mediump float;'+
+            'varying vec3 vColor;'+
+            'void main(void) {'+
+                'gl_FragColor = vec4(vColor, 1.);'+
+            '}';
+
+        // Create fragment shader object
+        var fragShader = gl.createShader(gl.FRAGMENT_SHADER);
+
+        // Create a shader program object to store
+        var shaderProgram = gl.createProgram();
+
+        function setupShader(){
+            // Attach vertex shader source code
+            gl.shaderSource(vertShader, vertCode);
+            // Compile the vertex shader
+            gl.compileShader(vertShader);
+            // Attach fragment shader source code
+            gl.shaderSource(fragShader, fragCode);
+            // Compile the fragmentt shader
+            gl.compileShader(fragShader);
+        }
+
+        function setupProgram(){
+            // Attach a vertex shader
+            gl.attachShader(shaderProgram, vertShader);
+            // Attach a fragment shader
+            gl.attachShader(shaderProgram, fragShader);
+            // Link both the programs
+            gl.linkProgram(shaderProgram);
+        }
+        setupShader();
+        setupProgram();
+      </script>
+
+      <script type="text/javascript" src="script/buttonClick.js"></script>
+      <script type="text/javascript" src="script/draw.js"></script>
+</html>

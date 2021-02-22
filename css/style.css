@@ -1,0 +1,126 @@
+html {
+    height: 100%;
+  }
+body {
+    background: #000000;
+    color: #ffffff;
+    margin: 0;
+    min-height: 100%;
+    height: 100%;
+    position: relative;
+  }
+  
+  .hub {
+    display: block;
+    font-family: sans-serif;
+    font-weight: bold;
+    font-size: 4vw;
+    position: absolute;
+    left: 50%;
+    margin-top: 30px;
+    transform: translate(-50%, -50%);
+  }
+  
+  .hub span:nth-child(2) {
+    background: #FF9900;
+    color: #000000;
+    border-radius: 1vw;
+    padding: 0 0.5vw 0.5vw 0.5vw;
+    display: inline-block;
+  }
+
+.button-container {
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 90px;
+    margin-left: 450px;
+    align-items: center;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 30px;
+  left: 50%;
+  align-items: center;
+}
+
+.title{
+    position: relative;   
+    font-weight: bold;
+    text-align: center;
+    padding-top: 40px;
+    margin-left: 5%;
+}
+
+.navbar {
+  position: fixed;
+  width: 100%;
+  height: 7%;
+  background-color: rgb(49, 49, 49);
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-top: 35px;
+}
+
+
+
+.button {
+  position: relative;
+  border-width: 0px;
+  color: rgb(8, 2, 2);
+  font-size: 16px;
+  border-radius: 3px;
+  text-align: center;
+  transition: 0.3s;
+  width: 100px;
+  height: 45px;
+  margin-left: 15px;
+  cursor: pointer;
+  font-weight: bold;
+  background-color: #FF9900;
+}
+
+
+.button-file{
+  border-width: 0px;
+  border-radius: 3px;
+  position: absolute;
+  min-height: 40px;
+  min-width: 100px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+#button-save{
+  right: 12%;
+  background-color: #808080;
+  font-weight: bold;
+  color:rgb(8, 2, 2);
+}
+
+#button-load{
+  right: 20%;
+  background-color: #292929;
+  font-weight: bold;
+  color:rgb(255, 251, 251);
+}
+
+.button:hover {
+  opacity: 0.8;
+}
+
+.button-file:hover{
+  opacity: 0.8;
+}
+
+canvas {
+  width: 1000px;
+  height: 480px;
+  position: relative;
+  margin-left: 20%;
+  margin-top: 15px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+}
+
