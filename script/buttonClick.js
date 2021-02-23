@@ -22,15 +22,17 @@ function lineButton(){
     polygonMode = false;
 }
 
+var numVert;
+
 function squareButton(){
     cursorMode = false;
     resizeMode = false;
     lineMode = false;
     squareMode = true;
     polygonMode = false;
-}
 
-var numVert;
+    numVert = 4;
+}
 
 function polygonButton(){
     cursorMode = false;

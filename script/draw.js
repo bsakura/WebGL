@@ -118,7 +118,18 @@ canvasElem.addEventListener('mousedown', (e) =>
             //line here
         }
         else if(squareMode == true){
-            //square here
+            vertexCount += 1;
+            colors.push(0,0,1);
+            if(vertexCount == numVert){
+                objects.push({
+                    "name" : "square",
+                    "mode" : gl.TRIANGLE_FAN,
+                    "off" : offset,
+                    "count" : numVert
+                });
+                offset += numVert;
+                vertexCount = 0;
+            }
         }
 
         else if(polygonMode == true){
