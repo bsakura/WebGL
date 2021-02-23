@@ -1,8 +1,8 @@
 function getMousePosition(canvas, event) { 
     let temp = [];
     let rect = canvas.getBoundingClientRect(); 
-    let x = ((event.clientX - rect.left)/(canvas.width))*2-1; 
-    let y = -((event.clientY - rect.top)/(canvas.height))*2+1; 
+    let x = ((event.clientX - rect.left)/(canvas.width))*2-1;
+    let y = -((event.clientY - rect.top)/(canvas.height))*2+1;
     //console.log("Coordinate x: " + x, "Coordinate y: " + y);
     temp.push(x);
     temp.push(y)
@@ -114,8 +114,21 @@ canvasElem.addEventListener('mousedown', (e) =>
     else if(!cursorMode){
         vertices.push(vec[0]);
         vertices.push(vec[1]);
+        //console.log(vertices);
         if(lineMode == true){
             //line here
+            vertexCount += 1;
+            colors.push(1,0,0);
+            if(vertexCount == 2){
+                objects.push({
+                    "name" : "line",
+                    "mode" : gl.LINES,
+                    "off" : offset,
+                    "count" : 2
+                });
+                offset += 2;
+                vertexCount = 0;
+            }
         }
         else if(squareMode == true){
             vertexCount += 1;
@@ -275,3 +288,51 @@ canvasElem.addEventListener('mouseup', (e) => {
 
 });
 
+function jsoning() {
+    jsonData.vertices = JSON.stringify(vertices);
+    jsonData.objects = JSON.stringify(objects);
+    jsonData.colors = JSON.stringify(colors);
+    jsonData.offset = JSON.stringify(offset);
+    var myvertices = JSON.parse(jsonData.vertices);
+    var myobjects = JSON.parse(jsonData.objects);   //loaded vertice
+    var mycolors = JSON.parse(jsonData.colors);   //loaded vertice
+    var myoffset = JSON.parse(jsonData.offset);   //loaded vertice
+    console.log("json: ", jsonData);
+    console.log("vertices: ", myvertices);
+    console.log("objects: ", myobjects);
+    console.log("colors: ", mycolors);
+    console.log("offset: ", myoffset);
+}
+
+function download(content, fileName, contentType) {
+    const a = document.createElement("a");
+    const file = new Blob([content], { type: contentType });
+    a.href = URL.createObjectURL(file);
+    a.download = fileName;
+    a.click();
+}
+
+function saveData(){
+    jsoning();
+    download(JSON.stringify(jsonData), "attribute_data.json", "text/plain");
+}
+
+function loadData(){
+    var files = document.getElementById('selectFiles').files;
+    console.log(files);
+    if (files.length <= 0) {
+        return false;
+    }
+  
+    var fr = new FileReader();
+    fr.onload = function(e) { 
+        console.log("aw");
+        var result = JSON.parse(e.target.result);
+        vertices = JSON.parse(result.vertices);
+        colors = JSON.parse(result.colors);
+        objects = JSON.parse(result.objects);
+        offset = JSON.parse(result.offset);
+        draw();
+    }
+    fr.readAsText(files.item(0));
+}

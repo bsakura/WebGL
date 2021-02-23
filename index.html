@@ -29,7 +29,9 @@
         <canvas id="glcanvas" width="pixel">
             Sorry, your browser doesn't support the HTML5 canvas element
         </canvas>
+        
         <div class = "row">
+            <input type="file" class = "button-file" id="selectFiles" value="Import" />
             <button class = "button-file" id = "button-save" onclick="saveData()">Save</button>
             <button class = "button-file" id = "button-load" onclick="loadData()">Load</button>
         </div>
@@ -44,6 +46,7 @@
         var colors = [];
         var objects = [];
         var offset = 0;
+        var jsonData = {};
 
         const canvas = document.querySelector('#glcanvas');
         canvas.width = 900;
