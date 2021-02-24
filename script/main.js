@@ -125,15 +125,28 @@ canvasElem.addEventListener('mousedown', (e) => {
         }
         else if (squareMode == true) {
             vertexCount += 1;
+            colors.push(0, 0, 1);
             if (vertexCount == numVert) {
-                vertices.splice(vertices.length - 2, 1);
-                colors.push(0, 0, 1);
-                vertices.push(vec[0]);
-                vertices.push(vec[1]);
-                colors.push(0, 0, 1);
-                vertices.push(vec[0]);
-                vertices.push(vertices[vertices.length - 6]);
-                colors.push(0, 0, 1);
+                x1 = vertices[vertices.length-4];
+                y1 = vertices[vertices.length-3];
+                x2 = vertices[vertices.length-2];
+                y2 = vertices[vertices.length-1];
+                d = Math.min(Math.abs(x1-x2), Math.abs(y1-y2));
+                if (Math.abs(x1-x2) > d) {
+                    if (x1 > x2) {
+                        x2 = x1-d;
+                    } else {
+                        x2 = x1+d;
+                    }
+                } else if (Math.abs(y1-y2) > d) {
+                    if (y1 > y2) {
+                        y2 = y1-d;
+                    } else {
+                        y2 = y1+d;
+                    }
+                }
+                vertices.splice(vertices.length-2, 2, x1, y2, x2, y2, x2, y1);
+                colors.push(0, 0, 1, 0, 0, 1, 0, 0, 1);
                 objects.push({
                     "name": "square",
                     "mode": gl.TRIANGLE_FAN,
@@ -142,9 +155,6 @@ canvasElem.addEventListener('mousedown', (e) => {
                 });
                 offset += 4;
                 vertexCount = 0;
-            } else {
-                colors.push(0, 0, 1);
-                vertices.push(vec[0]);
             }
         }
 
