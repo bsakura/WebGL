@@ -9,63 +9,45 @@ function getMousePosition(canvas, event) {
     return (temp);
 }
 
-// Create an empty buffer object
 var vertex_buffer = gl.createBuffer();
-// Create an empty buffer object and store color data
 var color_buffer = gl.createBuffer();
 
 function setUpBuffer() {
-    // Bind appropriate array buffer to it
     gl.bindBuffer(gl.ARRAY_BUFFER, vertex_buffer);
 
-    // Unbind the buffer
     gl.bindBuffer(gl.ARRAY_BUFFER, null);
 
     gl.bindBuffer(gl.ARRAY_BUFFER, color_buffer);
 
-    /*======= Associating shaders to buffer objects ======*/
-    // Bind vertex buffer object
     gl.bindBuffer(gl.ARRAY_BUFFER, vertex_buffer);
 
-    // Get the attribute location
     var coord = gl.getAttribLocation(shaderProgram, "coordinates");
 
-    // Point an attribute to the currently bound VBO
     gl.vertexAttribPointer(coord, 2, gl.FLOAT, false, 0, 0);
 
-    // Enable the attribute
     gl.enableVertexAttribArray(coord);
 
-    // bind the color buffer
     gl.bindBuffer(gl.ARRAY_BUFFER, color_buffer);
 
-    // get the attribute location
     var color = gl.getAttribLocation(shaderProgram, "color");
 
-    // point attribute to the volor buffer object
     gl.vertexAttribPointer(color, 3, gl.FLOAT, false, 0, 0);
 
-    // enable the color attribute
     gl.enableVertexAttribArray(color);
 
     gl.clearColor(0, 0, 0, 0);
 
-    // Enable the depth test
     gl.enable(gl.DEPTH_TEST);
 
-    // Clear the color and depth buffer
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-    // Set the view port
     gl.viewport(0, 0, canvas.width, canvas.height);
 }
 
 function draw() {
     gl.useProgram(shaderProgram);
-    // Pass the vertex data to the buffer
     gl.bindBuffer(gl.ARRAY_BUFFER, vertex_buffer);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
-    // Unbind the buffer
     gl.bindBuffer(gl.ARRAY_BUFFER, null);
 
     gl.bindBuffer(gl.ARRAY_BUFFER, color_buffer);
