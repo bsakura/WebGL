@@ -31,7 +31,7 @@ function squareButton(){
     squareMode = true;
     polygonMode = false;
 
-    numVert = 4;
+    numVert = 2;
 }
 
 function polygonButton(){
