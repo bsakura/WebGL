@@ -33,7 +33,7 @@ body {
   display: flex;
   flex-wrap: wrap;
   margin-top: 90px;
-  margin-left: 450px;
+  margin-left: 350px;
   align-items: center;
 }
 
@@ -53,15 +53,7 @@ body {
   margin-left: 5%;
 }
 
-.navbar {
-  position: fixed;
-  width: 100%;
-  height: 7%;
-  background-color: rgb(49, 49, 49);
-  padding-left: 10px;
-  padding-right: 10px;
-  padding-top: 35px;
-}
+
 
 .button {
   position: relative;
