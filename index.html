@@ -24,8 +24,18 @@
             <button class="button" id = "button-draw" onclick="lineButton()">Line</button>
             <button class="button" id = "button-draw" onclick="squareButton()">Square</button>
             <button class="button" id = "button-draw" onclick="polygonButton()">Polygon</button>
-            <div class="popup"><button class="button" id = "button-help" onclick="popUp()">Help</button> <span class="popuptext" id="myPopup">Choose the mode then draw</span></div>
+            <button class="button" id = "button-help" onclick="popUp()">Help</button> 
         </div>
+        <div id="myModal" class="modal">
+
+            <!-- Modal content -->
+            <div class="modal-content">
+              <span class="close">&times;</span>
+              <h2>Help</h2>
+              <p>Some text in the Modal..</p>
+            </div>
+          
+          </div>
         <canvas id="glcanvas" width="pixel">
             Sorry, your browser doesn't support the HTML5 canvas element
         </canvas>
@@ -106,11 +116,31 @@
         setupProgram();
       </script>
     <script>
-    // When the user clicks on div, open the popup
-    function popUp() {
-      var popup = document.getElementById("myPopup");
-      popup.classList.toggle("show");
+    // Get the modal
+    var modal = document.getElementById("myModal");
+
+    // Get the button that opens the modal
+    var btn = document.getElementById("button-help");
+
+    // Get the <span> element that closes the modal
+    var span = document.getElementsByClassName("close")[0];
+
+    // When the user clicks the button, open the modal 
+    btn.onclick = function() {
+    modal.style.display = "block";
     }
+
+    // When the user clicks on <span> (x), close the modal
+    span.onclick = function() {
+    modal.style.display = "none";
+    }
+
+    // When the user clicks anywhere outside of the modal, close it
+    window.onclick = function(event) {
+    if (event.target == modal) {
+        modal.style.display = "none";
+    }
+}
     </script>
       <script type="text/javascript" src="script/buttonClick.js"></script>
       <script type="text/javascript" src="script/draw.js"></script>
