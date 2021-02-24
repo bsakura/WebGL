@@ -294,18 +294,7 @@ canvasElem.addEventListener('mousemove', (e) => {
 canvasElem.addEventListener('mouseup', (e) => {
     vec = null;
     backupVertices = null;
-    // }
-    // else if(resizeMode){
-    //     let vec3 = getMousePosition(canvasElem, e);
-    //     if(objects[selectedObject].mode == "line"){
-    //         vertices[selectedVertex] = vec3[0];
-    //         vertices[selectedVertex+1] = vec3[1];
-    //     }
-    //     else if(objects[selectedObject].mode == "square"){
-
-    //         vertices[objects[selectedObject].offset]
-    //     }
-    // }
+   
 
 });
 

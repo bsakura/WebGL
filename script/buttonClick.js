@@ -41,6 +41,6 @@ function polygonButton(){
     squareMode = false;
     polygonMode = true;
 
-    numVert = Number(prompt("Please enter number of vertices of your polygon", 3));
+    numVert = Number(prompt("Number of vertices", 5));
 }
 
