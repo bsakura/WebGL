@@ -90,21 +90,21 @@ body {
 }
 
 #button-save {
-  right: 12%;
+  right: 20%;
   background-color: #808080;
   font-weight: bold;
   color: rgb(8, 2, 2);
 }
 
 #button-load {
-  right: 20%;
+  right: 28%;
   background-color: #292929;
   font-weight: bold;
   color: rgb(255, 251, 251);
 }
 
 #selectFiles {
-  right: 28%;
+  right: 36%;
   background-color: #ff9900;
   font-weight: bold;
   color: rgb(255, 251, 251);
@@ -120,10 +120,8 @@ body {
 }
 
 canvas {
-  width: 1000px;
-  height: 480px;
   position: relative;
-  margin-left: 20%;
+  margin-left: 15%;
   margin-top: 15px;
   border: 1px solid #ccc;
   border-radius: 10px;

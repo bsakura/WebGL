@@ -3,7 +3,7 @@ function getMousePosition(canvas, event) {
     let rect = canvas.getBoundingClientRect(); 
     let x = ((event.clientX - rect.left)/(canvas.width))*2-1;
     let y = -((event.clientY - rect.top)/(canvas.height))*2+1;
-    //console.log("Coordinate x: " + x, "Coordinate y: " + y);
+    
     temp.push(x);
     temp.push(y)
     return(temp);
@@ -12,7 +12,7 @@ function getMousePosition(canvas, event) {
 // Create an empty buffer object
 var vertex_buffer = gl.createBuffer();
 // Create an empty buffer object and store color data
-var color_buffer = gl.createBuffer ();
+var color_buffer = gl.createBuffer();
 
 function setUpBuffer(){
     // Bind appropriate array buffer to it
@@ -93,6 +93,7 @@ canvasElem.addEventListener('mousedown', (e) =>
         for(var i = 0; i < vertices.length; i+=2){
             if(((vertices[i]).toFixed(1) == (vec[0]).toFixed(1)) 
             && ((vertices[i+1]).toFixed(1) == (vec[1]).toFixed(1))){
+                console.log(i);
                 selectedVertex = i;
                 break;
             }
