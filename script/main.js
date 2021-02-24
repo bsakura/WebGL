@@ -1,3 +1,66 @@
+var vertices = [];
+var colors = [];
+var objects = [];
+var offset = 0;
+var jsonData = {};
+
+const canvas = document.querySelector('#glcanvas');
+canvas.width = 1000;
+canvas.height = 1000;
+// Initialize the GL context
+const gl = canvas.getContext('webgl');
+
+if (!gl) {
+    alert('Unable to initialize WebGL. Your browser or machine may not support it.');
+}
+
+// Vertex shader source code
+var vertCode = 'attribute vec3 coordinates;' +
+    'attribute vec3 color;' +
+    'varying vec3 vColor;' +
+    'void main(void) {' +
+    ' gl_Position = vec4(coordinates, 1.0);' +
+    'vColor = color;' +
+    '}';
+
+// Create a vertex shader object
+var vertShader = gl.createShader(gl.VERTEX_SHADER);
+
+// Fragment shader source code
+var fragCode = 'precision mediump float;' +
+    'varying vec3 vColor;' +
+    'void main(void) {' +
+    'gl_FragColor = vec4(vColor, 1.);' +
+    '}';
+
+// Create fragment shader object
+var fragShader = gl.createShader(gl.FRAGMENT_SHADER);
+
+// Create a shader program object to store
+var shaderProgram = gl.createProgram();
+
+function setupShader() {
+    // Attach vertex shader source code
+    gl.shaderSource(vertShader, vertCode);
+    // Compile the vertex shader
+    gl.compileShader(vertShader);
+    // Attach fragment shader source code
+    gl.shaderSource(fragShader, fragCode);
+    // Compile the fragmentt shader
+    gl.compileShader(fragShader);
+}
+
+function setupProgram() {
+    // Attach a vertex shader
+    gl.attachShader(shaderProgram, vertShader);
+    // Attach a fragment shader
+    gl.attachShader(shaderProgram, fragShader);
+    // Link both the programs
+    gl.linkProgram(shaderProgram);
+}
+setupShader();
+setupProgram();
+
 function getMousePosition(canvas, event) {
     let temp = [];
     let rect = canvas.getBoundingClientRect();
@@ -130,7 +193,7 @@ canvasElem.addEventListener('mousedown', (e) => {
         else if (squareMode == true) {
             vertexCount += 1;
             colors.push(rVal, gVal, bVal);
-            if (vertexCount == numVert) {
+            if (vertexCount == 2) {
                 x1 = vertices[vertices.length - 4];
                 y1 = vertices[vertices.length - 3];
                 x2 = vertices[vertices.length - 2];
@@ -150,7 +213,7 @@ canvasElem.addEventListener('mousedown', (e) => {
                     }
                 }
                 vertices.splice(vertices.length - 2, 2, x1, y2, x2, y2, x2, y1);
-                colors.push(rVal, gVal, bVal, rVal, gVal, bVal, rVal, gVal, bVal);
+                colors.push(rVal, gVal, bVal, rVal, gVal, bVal);
                 objects.push({
                     "name": "square",
                     "mode": gl.TRIANGLE_FAN,
@@ -357,4 +420,74 @@ function hexToRgb(hex) {
         g: parseInt(result[2], 16),
         b: parseInt(result[3], 16)
     } : null;
+}
+
+function cursorButton() {
+    cursorMode = true;
+    resizeMode = false;
+    lineMode = false;
+    squareMode = false;
+    polygonMode = false;
+}
+
+function resizeButton() {
+    cursorMode = false;
+    resizeMode = true;
+    lineMode = true;
+    squareMode = false;
+    polygonMode = false;
+}
+
+function lineButton() {
+    cursorMode = false;
+    resizeMode = false;
+    lineMode = true;
+    squareMode = false;
+    polygonMode = false;
+}
+
+function squareButton() {
+    cursorMode = false;
+    resizeMode = false;
+    lineMode = false;
+    squareMode = true;
+    polygonMode = false;
+}
+
+var numVert;
+
+function polygonButton() {
+    cursorMode = false;
+    resizeMode = false;
+    lineMode = false;
+    squareMode = false;
+    polygonMode = true;
+
+    numVert = Number(prompt("Number of vertices", 5));
+}
+
+// Get the modal
+var modal = document.getElementById("myModal");
+
+// Get the button that opens the modal
+var btn = document.getElementById("button-help");
+
+// Get the <span> element that closes the modal
+var span = document.getElementsByClassName("close")[0];
+
+// When the user clicks the button, open the modal 
+btn.onclick = function () {
+    modal.style.display = "block";
+}
+
+// When the user clicks on <span> (x), close the modal
+span.onclick = function () {
+    modal.style.display = "none";
+}
+
+// When the user clicks anywhere outside of the modal, close it
+window.onclick = function (event) {
+    if (event.target == modal) {
+        modal.style.display = "none";
+    }
 }

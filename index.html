@@ -76,73 +76,7 @@
 
 </body>
 
-<script>
-    var vertices = [];
-    var colors = [];
-    var objects = [];
-    var offset = 0;
-    var jsonData = {};
-
-    const canvas = document.querySelector('#glcanvas');
-    canvas.width = 1000;
-    canvas.height = 1000;
-    // Initialize the GL context
-    const gl = canvas.getContext('webgl');
-
-    if (!gl) {
-        alert('Unable to initialize WebGL. Your browser or machine may not support it.');
-    }
-
-    // Vertex shader source code
-    var vertCode = 'attribute vec3 coordinates;' +
-        'attribute vec3 color;' +
-        'varying vec3 vColor;' +
-        'void main(void) {' +
-        ' gl_Position = vec4(coordinates, 1.0);' +
-        'vColor = color;' +
-        '}';
-
-    // Create a vertex shader object
-    var vertShader = gl.createShader(gl.VERTEX_SHADER);
-
-    // Fragment shader source code
-    var fragCode = 'precision mediump float;' +
-        'varying vec3 vColor;' +
-        'void main(void) {' +
-        'gl_FragColor = vec4(vColor, 1.);' +
-        '}';
-
-    // Create fragment shader object
-    var fragShader = gl.createShader(gl.FRAGMENT_SHADER);
-
-    // Create a shader program object to store
-    var shaderProgram = gl.createProgram();
-
-    function setupShader() {
-        // Attach vertex shader source code
-        gl.shaderSource(vertShader, vertCode);
-        // Compile the vertex shader
-        gl.compileShader(vertShader);
-        // Attach fragment shader source code
-        gl.shaderSource(fragShader, fragCode);
-        // Compile the fragmentt shader
-        gl.compileShader(fragShader);
-    }
-
-    function setupProgram() {
-        // Attach a vertex shader
-        gl.attachShader(shaderProgram, vertShader);
-        // Attach a fragment shader
-        gl.attachShader(shaderProgram, fragShader);
-        // Link both the programs
-        gl.linkProgram(shaderProgram);
-    }
-    setupShader();
-    setupProgram();
-</script>
-<script type="text/javascript" src="script/button.js"></script>
 <script type="text/javascript" src="script/main.js"></script>
-<script type="text/javascript" src="script/popup.js"></script>
 
 
 </html>
