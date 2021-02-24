@@ -72,13 +72,15 @@ function draw(){
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
 
     for (var i = 0; i<objects.length; i++) {
-        //console.log(objects[i]);
+        console.log(objects[i]);
         gl.drawArrays(objects[i].mode, objects[i].off, objects[i].count);
     }
 }
 
 var canvasElem = document.querySelector("#glcanvas"); 
-var vec, selectedVertex, selectedObject;
+var vec;
+var selectedVertex = -1; 
+var selectedObject;
 var vertexCount = 0;
 var vecTemp = [];
 var backupVertices;
@@ -88,19 +90,10 @@ canvasElem.addEventListener('mousedown', (e) =>
 { 
     vec = getMousePosition(canvasElem, e);
     if(resizeMode || cursorMode){
-        selectedVertex = -1;
-        selectedObject = -1;
-        for(var i = 0; i < vertices.length; i+=2){
-            if(((vertices[i]).toFixed(1) == (vec[0]).toFixed(1)) 
-            && ((vertices[i+1]).toFixed(1) == (vec[1]).toFixed(1))){
-                console.log(i);
-                selectedVertex = i;
-                break;
-            }
-        }
+        //selectedVertex = -1;
         if(selectedVertex != -1){
             console.log(selectedVertex);
-            console.log(objects);
+            //console.log(objects);
             for(var i = objects.length-1; i >= 0; i--){
                 //console.log(objects[i].off)
                 if(objects[i].off*2 <= selectedVertex){
@@ -109,10 +102,28 @@ canvasElem.addEventListener('mousedown', (e) =>
                 }
                 selectedObject = 0;
             }
+            if(resizeMode) {
+                console.log("masuk");
+                vertices[selectedVertex] = vec[0];
+                vertices[selectedVertex+1] = vec[1];
+                selectedVertex = -1;
+                draw();
+            }
+        } else {
+            selectedObject = -1;
+            for(var i = 0; i < vertices.length; i+=2){
+                if(((vertices[i]).toFixed(1) == (vec[0]).toFixed(1)) 
+                && ((vertices[i+1]).toFixed(1) == (vec[1]).toFixed(1))){
+                    //console.log(i);
+                    selectedVertex = i;
+                    break;
+                }
+            }
         }
+        
         backupVertices = vertices.slice();
     }
-    else if(!cursorMode){
+    else if(!cursorMode && !resizeMode){
         vertices.push(vec[0]);
         vertices.push(vec[1]);
         //console.log(vertices);
