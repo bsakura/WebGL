@@ -24,7 +24,7 @@
             <button class="button" id = "button-draw" onclick="lineButton()">Line</button>
             <button class="button" id = "button-draw" onclick="squareButton()">Square</button>
             <button class="button" id = "button-draw" onclick="polygonButton()">Polygon</button>
-            <button class="button" id = "button-help">Help</button>
+            <div class="popup"><button class="button" id = "button-help" onclick="popUp()">Help</button> <span class="popuptext" id="myPopup">Choose the mode then draw</span></div>
         </div>
         <canvas id="glcanvas" width="pixel">
             Sorry, your browser doesn't support the HTML5 canvas element
@@ -105,7 +105,13 @@
         setupShader();
         setupProgram();
       </script>
-
+    <script>
+    // When the user clicks on div, open the popup
+    function popUp() {
+      var popup = document.getElementById("myPopup");
+      popup.classList.toggle("show");
+    }
+    </script>
       <script type="text/javascript" src="script/buttonClick.js"></script>
       <script type="text/javascript" src="script/draw.js"></script>
 </html>
