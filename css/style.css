@@ -196,3 +196,10 @@ ul {
   text-decoration: none;
   cursor: pointer;
 }
+
+input[type="color"] {
+  background-color: #000;
+	border: none;
+	width: 32px;
+	height: 32px;
+}

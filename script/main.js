@@ -66,9 +66,13 @@ var selectedObject;
 var vertexCount = 0;
 var vecTemp = [];
 var backupVertices;
+var rVal;
+var gVal;
+var bVal;
 setUpBuffer();
 
 canvasElem.addEventListener('mousedown', (e) => {
+    updateColor();
     vec = getMousePosition(canvasElem, e);
     if (resizeMode || cursorMode) {
         //selectedVertex = -1;
@@ -111,7 +115,7 @@ canvasElem.addEventListener('mousedown', (e) => {
         if (lineMode == true) {
             //line here
             vertexCount += 1;
-            colors.push(1, 0, 0);
+            colors.push(rVal, gVal, bVal);
             if (vertexCount == 2) {
                 objects.push({
                     "name": "line",
@@ -125,28 +129,28 @@ canvasElem.addEventListener('mousedown', (e) => {
         }
         else if (squareMode == true) {
             vertexCount += 1;
-            colors.push(0, 0, 1);
+            colors.push(rVal, gVal, bVal);
             if (vertexCount == numVert) {
-                x1 = vertices[vertices.length-4];
-                y1 = vertices[vertices.length-3];
-                x2 = vertices[vertices.length-2];
-                y2 = vertices[vertices.length-1];
-                d = Math.min(Math.abs(x1-x2), Math.abs(y1-y2));
-                if (Math.abs(x1-x2) > d) {
+                x1 = vertices[vertices.length - 4];
+                y1 = vertices[vertices.length - 3];
+                x2 = vertices[vertices.length - 2];
+                y2 = vertices[vertices.length - 1];
+                d = Math.min(Math.abs(x1 - x2), Math.abs(y1 - y2));
+                if (Math.abs(x1 - x2) > d) {
                     if (x1 > x2) {
-                        x2 = x1-d;
+                        x2 = x1 - d;
                     } else {
-                        x2 = x1+d;
+                        x2 = x1 + d;
                     }
-                } else if (Math.abs(y1-y2) > d) {
+                } else if (Math.abs(y1 - y2) > d) {
                     if (y1 > y2) {
-                        y2 = y1-d;
+                        y2 = y1 - d;
                     } else {
-                        y2 = y1+d;
+                        y2 = y1 + d;
                     }
                 }
-                vertices.splice(vertices.length-2, 2, x1, y2, x2, y2, x2, y1);
-                colors.push(0, 0, 1, 0, 0, 1, 0, 0, 1);
+                vertices.splice(vertices.length - 2, 2, x1, y2, x2, y2, x2, y1);
+                colors.push(rVal, gVal, bVal, rVal, gVal, bVal, rVal, gVal, bVal);
                 objects.push({
                     "name": "square",
                     "mode": gl.TRIANGLE_FAN,
@@ -160,7 +164,7 @@ canvasElem.addEventListener('mousedown', (e) => {
 
         else if (polygonMode == true) {
             vertexCount += 1;
-            colors.push(0, 0, 1);
+            colors.push(rVal, gVal, bVal);
             if (vertexCount == numVert) {
                 objects.push({
                     "name": "polygon",
@@ -286,9 +290,16 @@ canvasElem.addEventListener('mousemove', (e) => {
 canvasElem.addEventListener('mouseup', (e) => {
     vec = null;
     backupVertices = null;
-   
+
 
 });
+
+function updateColor() {
+    var color = hexToRgb(document.getElementById("color").value);
+    rVal = color.r / 255;
+    gVal = color.g / 255;
+    bVal = color.b / 255;
+}
 
 function jsoning() {
     jsonData.vertices = JSON.stringify(vertices);
@@ -337,4 +348,13 @@ function loadData() {
         draw();
     }
     fr.readAsText(files.item(0));
+}
+
+function hexToRgb(hex) {
+    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? {
+        r: parseInt(result[1], 16),
+        g: parseInt(result[2], 16),
+        b: parseInt(result[3], 16)
+    } : null;
 }

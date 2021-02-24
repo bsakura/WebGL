@@ -1,143 +1,146 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <link rel="stylesheet" href="css/style.css">
-        <script>
-            var cursorMode = true;
-            var resizeMode = false;
-            var lineMode = false;
-            var squareMode = false;
-            var polygonMode = false;
-        </script>
-    </head>
 
-    <body>
-        <div class="title">
+<head>
+    <link rel="stylesheet" href="css/style.css">
+    <script>
+        var cursorMode = true;
+        var resizeMode = false;
+        var lineMode = false;
+        var squareMode = false;
+        var polygonMode = false;
+    </script>
+</head>
+
+<body>
+    <div class="title">
         <div class="hub">
             <span contenteditable="true">Web</span>
             <span contenteditable="true">GL</span>
         </div>
     </div>
-        <div class="button-container"> 
-            <button class="button" id = "button-mouse" onclick="cursorButton()">Cursor</button>
-            <button class="button" id = "button-mouse" onclick="resizeButton()">Resize</button>
-            <button class="button" id = "button-draw" onclick="lineButton()">Line</button>
-            <button class="button" id = "button-draw" onclick="squareButton()">Square</button>
-            <button class="button" id = "button-draw" onclick="polygonButton()">Polygon</button>
-            <button class="button" id = "button-help" onclick="popUp()">Help</button> 
-        </div>
-        <div id="myModal" class="modal">
+    <div class="button-container">
+        <label for="color">Select color:</label>
+        <input type="color" id="color" value="#ff0000">
+        <button class="button" id="button-mouse" onclick="cursorButton()">Cursor</button>
+        <button class="button" id="button-mouse" onclick="resizeButton()">Resize</button>
+        <button class="button" id="button-draw" onclick="lineButton()">Line</button>
+        <button class="button" id="button-draw" onclick="squareButton()">Square</button>
+        <button class="button" id="button-draw" onclick="polygonButton()">Polygon</button>
+        <button class="button" id="button-help" onclick="popUp()">Help</button>
+    </div>
+    <div id="myModal" class="modal">
 
-            <!-- Modal content -->
-            <div class="modal-content">
-              <span class="close">&times;</span>
-              <h2>Help</h2>
-              <h3>Drawing</h3>
-              <ul>
+        <!-- Modal content -->
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Help</h2>
+            <h3>Drawing</h3>
+            <ul>
                 <li>Click the button of which object you would like to draw</li>
                 <li>Within the canvas, click the point of vertices according of your object</li>
                 <li>The object will be shown once you've clicked enough point</li>
-              </ul>  
-              <h3>Cursor</h3>
-              <ul>
+            </ul>
+            <h3>Cursor</h3>
+            <ul>
                 <li>Drag your cursor over the canvas</li>
                 <li>The objects will move accordingly of your mouse event</li>
-              </ul>             
-              <h3>Save</h3>
-              <ul>
+            </ul>
+            <h3>Save</h3>
+            <ul>
                 <li>After you have finished drawing, click save</li>
                 <li>Save your drawing with your desired name</li>
                 <li>Your file will be saved with json</li>
-              </ul>
-              <h3>Load</h3>
-              <ul>
+            </ul>
+            <h3>Load</h3>
+            <ul>
                 <li>Select upload file</li>
                 <li>Choose json file</li>
                 <li>Your drawing will be rendered</li>
-              </ul>
-            </div>
-          
-          </div>
-        <canvas id="glcanvas" width="pixel">
-            Sorry, your browser doesn't support the HTML5 canvas element
-        </canvas>
-        
-        <div class = "row">
-            <input type="file" class = "button-file" id="selectFiles" value="Import" />
-            <button class = "button-file" id = "button-save" onclick="saveData()">Save</button>
-            <button class = "button-file" id = "button-load" onclick="loadData()">Load</button>
+            </ul>
         </div>
-           
-            
-        </div>
-        
-    </body>
 
-    <script>
-        var vertices = [];
-        var colors = [];
-        var objects = [];
-        var offset = 0;
-        var jsonData = {};
+    </div>
+    <canvas id="glcanvas" width="pixel">
+        Sorry, your browser doesn't support the HTML5 canvas element
+    </canvas>
 
-        const canvas = document.querySelector('#glcanvas');
-        canvas.width = 1000;
-        canvas.height = 1000;
-        // Initialize the GL context
-        const gl = canvas.getContext('webgl');
+    <div class="row">
+        <input type="file" class="button-file" id="selectFiles" value="Import" />
+        <button class="button-file" id="button-save" onclick="saveData()">Save</button>
+        <button class="button-file" id="button-load" onclick="loadData()">Load</button>
+    </div>
 
-        if (!gl) {
-            alert('Unable to initialize WebGL. Your browser or machine may not support it.');
-        }
 
-        // Vertex shader source code
-        var vertCode = 'attribute vec3 coordinates;'+
-            'attribute vec3 color;'+
-            'varying vec3 vColor;'+               
-            'void main(void) {' +
-                ' gl_Position = vec4(coordinates, 1.0);' +
-                'vColor = color;'+
-            '}';
+    </div>
 
-        // Create a vertex shader object
-        var vertShader = gl.createShader(gl.VERTEX_SHADER);
+</body>
 
-        // Fragment shader source code
-        var fragCode = 'precision mediump float;'+
-            'varying vec3 vColor;'+
-            'void main(void) {'+
-                'gl_FragColor = vec4(vColor, 1.);'+
-            '}';
+<script>
+    var vertices = [];
+    var colors = [];
+    var objects = [];
+    var offset = 0;
+    var jsonData = {};
 
-        // Create fragment shader object
-        var fragShader = gl.createShader(gl.FRAGMENT_SHADER);
+    const canvas = document.querySelector('#glcanvas');
+    canvas.width = 1000;
+    canvas.height = 1000;
+    // Initialize the GL context
+    const gl = canvas.getContext('webgl');
 
-        // Create a shader program object to store
-        var shaderProgram = gl.createProgram();
+    if (!gl) {
+        alert('Unable to initialize WebGL. Your browser or machine may not support it.');
+    }
 
-        function setupShader(){
-            // Attach vertex shader source code
-            gl.shaderSource(vertShader, vertCode);
-            // Compile the vertex shader
-            gl.compileShader(vertShader);
-            // Attach fragment shader source code
-            gl.shaderSource(fragShader, fragCode);
-            // Compile the fragmentt shader
-            gl.compileShader(fragShader);
-        }
+    // Vertex shader source code
+    var vertCode = 'attribute vec3 coordinates;' +
+        'attribute vec3 color;' +
+        'varying vec3 vColor;' +
+        'void main(void) {' +
+        ' gl_Position = vec4(coordinates, 1.0);' +
+        'vColor = color;' +
+        '}';
 
-        function setupProgram(){
-            // Attach a vertex shader
-            gl.attachShader(shaderProgram, vertShader);
-            // Attach a fragment shader
-            gl.attachShader(shaderProgram, fragShader);
-            // Link both the programs
-            gl.linkProgram(shaderProgram);
-        }
-        setupShader();
-        setupProgram();
-      </script>
-    <script>
+    // Create a vertex shader object
+    var vertShader = gl.createShader(gl.VERTEX_SHADER);
+
+    // Fragment shader source code
+    var fragCode = 'precision mediump float;' +
+        'varying vec3 vColor;' +
+        'void main(void) {' +
+        'gl_FragColor = vec4(vColor, 1.);' +
+        '}';
+
+    // Create fragment shader object
+    var fragShader = gl.createShader(gl.FRAGMENT_SHADER);
+
+    // Create a shader program object to store
+    var shaderProgram = gl.createProgram();
+
+    function setupShader() {
+        // Attach vertex shader source code
+        gl.shaderSource(vertShader, vertCode);
+        // Compile the vertex shader
+        gl.compileShader(vertShader);
+        // Attach fragment shader source code
+        gl.shaderSource(fragShader, fragCode);
+        // Compile the fragmentt shader
+        gl.compileShader(fragShader);
+    }
+
+    function setupProgram() {
+        // Attach a vertex shader
+        gl.attachShader(shaderProgram, vertShader);
+        // Attach a fragment shader
+        gl.attachShader(shaderProgram, fragShader);
+        // Link both the programs
+        gl.linkProgram(shaderProgram);
+    }
+    setupShader();
+    setupProgram();
+</script>
+<script>
     // Get the modal
     var modal = document.getElementById("myModal");
 
@@ -148,22 +151,23 @@
     var span = document.getElementsByClassName("close")[0];
 
     // When the user clicks the button, open the modal 
-    btn.onclick = function() {
-    modal.style.display = "block";
+    btn.onclick = function () {
+        modal.style.display = "block";
     }
 
     // When the user clicks on <span> (x), close the modal
-    span.onclick = function() {
-    modal.style.display = "none";
+    span.onclick = function () {
+        modal.style.display = "none";
     }
 
     // When the user clicks anywhere outside of the modal, close it
-    window.onclick = function(event) {
-    if (event.target == modal) {
-        modal.style.display = "none";
+    window.onclick = function (event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
     }
-}
-    </script>
-      <script type="text/javascript" src="script/button.js"></script>
-      <script type="text/javascript" src="script/main.js"></script>
+</script>
+<script type="text/javascript" src="script/button.js"></script>
+<script type="text/javascript" src="script/main.js"></script>
+
 </html>
